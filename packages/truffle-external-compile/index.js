@@ -105,7 +105,8 @@ async function processTarget (target, cwd) {
     const contract = Object.assign({}, target.properties || {});
 
     for (let [key, path] of Object.entries(target.fileProperties || {})) {
-      const contents = fs.readFileSync(resolve(cwd, path)).toString();
+      const isWasm = fs.readFileSync(resolve(cwd, path)).slice(0, 4).toString('hex') === '0061736d';
+      const contents = fs.readFileSync(resolve(cwd, path)).toString(isWasm ? 'hex' : undefined);
       let value;
       try {
         value = JSON.parse(contents);
